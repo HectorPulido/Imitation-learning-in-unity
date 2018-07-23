@@ -216,7 +216,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4628563563804096, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -25.3
+      value: -23.7
       objectReference: {fileID: 0}
     - target: {fileID: 4628563563804096, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
       propertyPath: m_LocalPosition.y
@@ -224,7 +224,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4628563563804096, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
       propertyPath: m_LocalPosition.z
-      value: -12.4
+      value: -16
       objectReference: {fileID: 0}
     - target: {fileID: 4628563563804096, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
       propertyPath: m_LocalRotation.x
@@ -274,6 +274,10 @@ Prefab:
       value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1460289388300920, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1991071170402772, guid: 5f0593101a37985498d49e5f0d9ac9ba, type: 2}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -355,8 +359,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 303702a0093ebc24385c902d6c6da63a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meditionPeriod: 0.001
-  meditionCount: 550
+  meditionPeriod: 0.00001
+  meditionCount: 500
 --- !u!114 &1310554056
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,12 +372,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e755a6fca50dc24ab15de659dbc48f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  epoch: 1000
-  topology: 0d0000000c000000080000000500000002000000
-  lossShowRate: 300
-  batchSize: 50
-  activationFunction: 0
-  learningRate: 0.002
+  epoch: 1001
+  topology: 0c0000000500000002000000
+  lossShowRate: 500
+  batchSize: 10
+  activationFunction: 1
+  learningRate: 0.01
   useRelativeDataPath: 1
   dataPath: car.nn
   save: 1
@@ -390,8 +394,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   eyes: {fileID: 128937209}
-  rayCount: 10
-  angles: 135
+  rayCount: 9
+  angles: 90
   maxDistance: 50
 --- !u!4 &1310554059 stripped
 Transform:

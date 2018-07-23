@@ -19,10 +19,10 @@ namespace NeuralReplicantBot.PerceptronHandler
         public bool save;
 
         [HideInInspector]
-        public bool load;
+        public bool load = false;
         NeuralNetwork nn;
 
-        private void Start()
+        private void Awake()
         {
             if (dataPath == "" || dataPath == null)
                 dataPath = useRelativeDataPath ? Application.dataPath + "/Data/data.nn" : "c://data.nn";

@@ -24,7 +24,6 @@ namespace NeuralReplicantBot.Examples.CarExample
             rb = GetComponent<Rigidbody>();
             cc = GetComponent<CarController>();
             b = GetComponent<Brain>();
-
             d = new float[rayCount + 3];
         }
 
@@ -32,19 +31,18 @@ namespace NeuralReplicantBot.Examples.CarExample
         {
             var m = GetSensors();
 
-            LinearAlgebra.Matrix input = new double[1, m.Length];
+            var input = new double[1, m.Length];
 
             for (int i = 0; i < m.Length; i++)
             {
                 input[0, i] = m[i];
             }
 
-            double[,] outputs = b.GetOutput(input);
-
-            cc.Move((float)outputs[0, 1],
-                    (float)outputs[0, 0],
-                    (float)outputs[0, 0], 
-                    0);
+            var outputs = b.GetOutput(input); //  { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") }; 
+            
+            var h = (float)outputs[0, 1];
+            var v = (float)outputs[0, 0];
+            cc.Move(h,v,v,0);
 
         }
 
@@ -52,7 +50,7 @@ namespace NeuralReplicantBot.Examples.CarExample
         {
             for (int i = 0; i < rayCount; i++)
             {
-                float angle = angles * (i - rayCount / 2.0f) / rayCount;
+                var angle = angles * (i - rayCount / 2.0f) / rayCount;
                 angle += transform.eulerAngles.y;
                 angle *= Mathf.Deg2Rad;
 

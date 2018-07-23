@@ -58,8 +58,11 @@ namespace NeuralReplicantBot.PerceptronHandler
                 InputValue = k[0];
                 OutputValue = k[1];
 
+                if(batchsize == 0)
+                    batchsize = InputValue.X;
+
                 for (int i = 0; i < InputValue.X / batchsize; i++)
-                {
+                {                    
                     //BATCH
                     var xbatch = InputValue.Slice(batchsize * i, 0, batchsize * (i + 1), InputValue.Y);
                     var ybatch = OutputValue.Slice(batchsize * i, 0, batchsize * (i + 1), OutputValue.Y);
@@ -79,7 +82,7 @@ namespace NeuralReplicantBot.PerceptronHandler
                     //Gradient Descend
                     GradientDescend(A, delta, LearningRate);
 
-                    if(i == 0)
+                    if(i == 0 && e % s == 0)
                         LossAction("Loss: " + LastError.Pow(2).Avg);
                 }                
             }
@@ -115,7 +118,7 @@ namespace NeuralReplicantBot.PerceptronHandler
             delta = new Matrix[LayerCount];
 
             error[LayerCount - 1] = output - OutputValue;
-            delta[LayerCount - 1] = error[LayerCount - 1]; //* Relu(Zlast, true);
+            delta[LayerCount - 1] = error[LayerCount - 1] * Activation(Zlast, true);
 
             for (int i = LayerCount - 2; i >= 0; i--)
             {
@@ -173,7 +176,7 @@ namespace NeuralReplicantBot.PerceptronHandler
             {
                 if (derivated)
                 {
-                    output[i, j] = output[i, j] > 0 ? 1 : 0;
+                    output[i, j] = output[i, j] > 0 ? 1 : 0.00001;
                 }
                 else
                 {

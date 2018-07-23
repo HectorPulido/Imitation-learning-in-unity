@@ -31,7 +31,7 @@ namespace NeuralReplicantBot.Examples.CarExample
         {
             m.inputs.AddRange(ncc.GetSensors());
 
-            float[] o = new float[] { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };
+            float[] o = new float[] { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };            
             m.outputs.AddRange(o);
         }
 
