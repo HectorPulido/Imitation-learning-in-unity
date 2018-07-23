@@ -3,16 +3,23 @@ using LinearAlgebra;
 
 namespace NeuralReplicantBot.PerceptronHandler
 {
+    public enum ActivationFunction { ReLU, Sigmoid }
+
     public class NeuralNetwork
     {
+        Random r;
+        ActivationFunction a;
+
         public int[] NeuronCount;
         public int LayerCount { get { return NeuronCount.Length; } }
 
         public Matrix[] W;
 
-        public NeuralNetwork(int[] NeuronCount, System.Random r)
+        public NeuralNetwork(int[] NeuronCount, Random r, ActivationFunction a)
         {
             this.NeuronCount = NeuronCount;
+            this.r = r;
+            this.a = a;
 
             W = new Matrix[LayerCount - 1];
             for (int i = 0; i < W.Length; i++)
@@ -21,54 +28,72 @@ namespace NeuralReplicantBot.PerceptronHandler
             }
         }
 
-        public NeuralNetwork(Matrix[] W)
+        public NeuralNetwork(Matrix[] W, Random r, ActivationFunction a)
         {
             this.W = W;
+            this.r = r;
+            this.a = a;
 
-            NeuronCount = new int[W.Length];
-            for (int i = 0; i < W.Length; i++)
+            NeuronCount = new int[W.Length + 1];
+
+            NeuronCount[0] = W[0].X;
+
+            for (int i = 1; i < W.Length; i++)
             {
-                NeuronCount[i] = W[i].y;
+                NeuronCount[i] = W[i].Y;
             }
         }
 
 
-        public void Learn(Matrix InputValue, Matrix OutputValue, double LearningRate, int epoch, Action<string> LossAction)
+        public void Learn(Matrix InputValue, Matrix OutputValue, 
+            double LearningRate, int epoch, 
+            Action<string> LossAction, int s = 10, int batchsize = 50)
         {
-            var ExampleCount = InputValue.x;
+            var ExampleCount = InputValue.X;
 
             for (int e = 0; e < epoch; e++)
             {
-                //FORWARDPROPAGATION
-                Matrix[] Z, A;
-                ForwardPropagation(out Z, out A, W, ExampleCount, LayerCount, InputValue);
+                var k = ShuffleMultiplesRows(new Matrix[] { InputValue, OutputValue }, r);
 
-                Matrix Zlast = Z[LayerCount - 1].Slice(0, 1, Z[LayerCount - 1].x, Z[LayerCount - 1].y);
-                Matrix output = A[A.Length - 1].Slice(0, 1, A[A.Length - 1].x, A[A.Length - 1].y);
+                InputValue = k[0];
+                OutputValue = k[1];
 
-                //BACKPROPAGATION
-                Matrix[] error, delta;
-                BackPropagation(out delta, out error, output, OutputValue, Zlast, W, Z, A, LayerCount);
-                Matrix LastError = error[LayerCount - 1];
+                for (int i = 0; i < InputValue.X / batchsize; i++)
+                {
+                    //BATCH
+                    var xbatch = InputValue.Slice(batchsize * i, 0, batchsize * (i + 1), InputValue.Y);
+                    var ybatch = OutputValue.Slice(batchsize * i, 0, batchsize * (i + 1), OutputValue.Y);
 
-                //Gradient Descend
-                GradientDescend(ref W, A, delta, LearningRate);
+                    //FORWARDPROPAGATION
+                    Matrix[] Z, A;
+                    ForwardPropagation(out Z, out A, batchsize, xbatch);
 
-                LossAction("Loss: " + LastError.abs.average * ExampleCount);
+                    Matrix Zlast = Z[LayerCount - 1].Slice(0, 1, Z[LayerCount - 1].X, Z[LayerCount - 1].Y);
+                    Matrix output = A[A.Length - 1].Slice(0, 1, A[A.Length - 1].X, A[A.Length - 1].Y);
 
+                    //BACKPROPAGATION
+                    Matrix[] error, delta;
+                    BackPropagation(out delta, out error, output, ybatch, Zlast, Z, A);
+                    Matrix LastError = error[LayerCount - 1];
+
+                    //Gradient Descend
+                    GradientDescend(A, delta, LearningRate);
+
+                    if(i == 0)
+                        LossAction("Loss: " + LastError.Pow(2).Avg);
+                }                
             }
         }
         public Matrix GetOutput(Matrix InputValue)
         {
-            var ExampleCount = InputValue.x;
+            var ExampleCount = InputValue.X;
             Matrix[] Z, A;
-            ForwardPropagation(out Z, out A, W, ExampleCount, LayerCount, InputValue);
+            ForwardPropagation(out Z, out A, ExampleCount, InputValue);
 
-            return A[A.Length - 1];
+            return A[A.Length - 1].Slice(0, 1, A[A.Length - 1].X, A[A.Length - 1].Y);
         }
 
-        static void ForwardPropagation(out Matrix[] Z, out Matrix[] A, Matrix[] W,
-                                            int ExampleCount, int LayerCount, Matrix InputValue)
+        void ForwardPropagation(out Matrix[] Z, out Matrix[] A, int ExampleCount,Matrix InputValue)
         {
             Z = new Matrix[LayerCount];
             A = new Matrix[LayerCount];
@@ -79,34 +104,51 @@ namespace NeuralReplicantBot.PerceptronHandler
             for (int i = 1; i < LayerCount; i++)
             {
                 Z[i] = (A[i - 1] * W[i - 1]).AddColumn(Matrix.Ones(ExampleCount, 1));
-                A[i] = sigmoid(Z[i]);//Relu(Z[i]); <- Uncomment if Relu
+                A[i] = Activation(Z[i]);
             }
-            A[A.Length - 1] = Z[Z.Length - 1]; //<- Uncomment if relu OR iregularized Values
+            A[A.Length - 1] = Z[Z.Length - 1];
         }
-        static void BackPropagation(out Matrix[] delta, out Matrix[] error, Matrix output, Matrix OutputValue,
-                                    Matrix Zlast, Matrix[] W, Matrix[] Z, Matrix[] A, int LayerCount)
+        void BackPropagation(out Matrix[] delta, out Matrix[] error, Matrix output, Matrix OutputValue,
+                                    Matrix Zlast, Matrix[] Z, Matrix[] A)
         {
             error = new Matrix[LayerCount];
-            error[LayerCount - 1] = output - OutputValue;
             delta = new Matrix[LayerCount];
-            delta[LayerCount - 1] = error[LayerCount - 1] * sigmoid(Zlast, true);
+
+            error[LayerCount - 1] = output - OutputValue;
+            delta[LayerCount - 1] = error[LayerCount - 1]; //* Relu(Zlast, true);
 
             for (int i = LayerCount - 2; i >= 0; i--)
             {
                 error[i] = delta[i + 1] * W[i].T;
-                delta[i] = error[i] * sigmoid(Z[i], true);
-                delta[i] = delta[i].Slice(0, 1, delta[i].x, delta[i].y);
+                delta[i] = error[i] * Activation(Z[i], true);
+                delta[i] = delta[i].Slice(0, 1, delta[i].X, delta[i].Y);
             }
         }
-        static void GradientDescend(ref Matrix[] W, Matrix[] A,
-                            Matrix[] delta, double LearningRate)
+        void GradientDescend(Matrix[] A,Matrix[] delta, double LearningRate)
         {
             for (int i = 0; i < W.Length; i++)
             {
                 W[i] -= (A[i].T * delta[i + 1]) * LearningRate;
             }
         }
-        static Matrix sigmoid(Matrix m, bool derivated = false)
+
+        Matrix Activation(Matrix m, bool derivated = false)
+        {
+            if (a == ActivationFunction.ReLU)
+            {
+                return Relu(m, derivated);
+            }
+            else if (a == ActivationFunction.Sigmoid)
+            {
+                return Sigmoid(m, derivated);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        Matrix Sigmoid(Matrix m, bool derivated = false)
         {
             double[,] output = m;
             Matrix.MatrixLoop((i, j) =>
@@ -121,10 +163,10 @@ namespace NeuralReplicantBot.PerceptronHandler
                     output[i, j] = 1 / (1 + Math.Exp(-output[i, j]));
                 }
 
-            }, m.x, m.y);
+            }, m.X, m.Y);
             return output;
         }
-        static Matrix Relu(Matrix m, bool derivated = false)
+        Matrix Relu(Matrix m, bool derivated = false)
         {
             double[,] output = m;
             Matrix.MatrixLoop((i, j) =>
@@ -138,8 +180,33 @@ namespace NeuralReplicantBot.PerceptronHandler
                     output[i, j] = output[i, j] > 0 ? output[i, j] : 0;
                 }
 
-            }, m.x, m.y);
+            }, m.X, m.Y);
             return output;
+        }
+
+        //Helper
+
+        public static Matrix[] ShuffleMultiplesRows(Matrix[] m, Random r)
+        {
+            Matrix[] temp = new Matrix[m.Length];
+            for (int i = 0; i < m.Length; i++)
+            {
+                temp[i] = m[i].ToMatrix;
+            }
+
+            var indexes = Matrix.RandomIndexes(m[0].X, r);
+
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                for (int k = 0; k < temp.Length; k++)
+                {
+                    for (int j = 0; j < m[k].Y; j++)
+                    {
+                        temp[k][i, j] = m[k][indexes[i], j];
+                    }                   
+                }                
+            }
+            return temp;
         }
 
     }

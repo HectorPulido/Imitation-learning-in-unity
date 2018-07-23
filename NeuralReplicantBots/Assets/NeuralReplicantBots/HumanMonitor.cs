@@ -20,7 +20,7 @@ namespace NeuralReplicantBot.PerceptronHandler
     public abstract class HumanMonitor : MonoBehaviour
     {
         public float meditionPeriod = 0.2f;
-        public float meditionTime = 30;
+        public float meditionCount = 30;
 
         float t;
         IEnumerator Start()
@@ -28,13 +28,13 @@ namespace NeuralReplicantBot.PerceptronHandler
             var medition = new Medition();
             medition.Init();
 
-            while (t <= meditionTime)
+            while (t <= meditionCount)
             {
 
                 Medition(ref medition);
 
                 yield return new WaitForSeconds(meditionPeriod);
-                t += meditionPeriod;
+                t ++;
             }
             MeditionEnd(medition);
         }

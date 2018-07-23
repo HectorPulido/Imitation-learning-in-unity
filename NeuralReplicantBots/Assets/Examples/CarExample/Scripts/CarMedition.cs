@@ -7,11 +7,10 @@ namespace NeuralReplicantBot.Examples.CarExample
 
     public class CarMedition : HumanMonitor
     {
-        public bool ready = false;
-
         Brain brain;
-        CarUserControl userControl;
-        NeuralCarControl neuralControl;
+        CarUserControl cuc;
+        NeuralCarControl ncc;
+        Rigidbody rb;
 
         Vector3 startPoint;
         Quaternion startRotation;
@@ -19,10 +18,9 @@ namespace NeuralReplicantBot.Examples.CarExample
         private void Awake()
         {
             brain = GetComponent<Brain>();
-            userControl = GetComponent<CarUserControl>();
-            neuralControl = GetComponent<NeuralCarControl>();
-
-            userControl.enabled = true;
+            cuc = GetComponent<CarUserControl>();
+            ncc = GetComponent<NeuralCarControl>();
+            rb = GetComponent<Rigidbody>();
 
             startPoint = transform.position;
             startRotation = transform.rotation;
@@ -31,21 +29,24 @@ namespace NeuralReplicantBot.Examples.CarExample
 
         protected override void Medition(ref Medition m)
         {
-            m.inputs.AddRange(neuralControl.GetSensors());
-            
+            m.inputs.AddRange(ncc.GetSensors());
+
             float[] o = new float[] { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };
             m.outputs.AddRange(o);
         }
-        
+
         protected override void MeditionEnd(Medition m)
         {
-            LinearAlgebra.Matrix input = new double[m.inputs.Count / neuralControl.rayCount, neuralControl.rayCount];
-            LinearAlgebra.Matrix output = new double[m.outputs.Count / 2, 2];
+            var medcount = m.outputs.Count / 2;
+
+
+            LinearAlgebra.Matrix input = new double[medcount, ncc.rayCount + 3];
+            LinearAlgebra.Matrix output = new double[medcount, 2];
 
             var k = 0;
-            for (int i = 0; i < input.x; i++)
+            for (int i = 0; i < input.X; i++)
             {
-                for (int j = 0; j < input.y; j++)
+                for (int j = 0; j < input.Y; j++)
                 {
                     input[i, j] = m.inputs[k];
                     k++;
@@ -53,22 +54,28 @@ namespace NeuralReplicantBot.Examples.CarExample
             }
 
             k = 0;
-            for (int i = 0; i < output.x; i++)
+            for (int i = 0; i < output.X; i++)
             {
-                for (int j = 0; j < output.y; j++)
+                for (int j = 0; j < output.Y; j++)
                 {
                     output[i, j] = m.outputs[k];
                     k++;
                 }
             }
 
-            userControl.enabled = false;
-            brain.Learn(input, output   );
-                        
+            cuc.enabled = false;
+
+            Debug.Log("Please wait, training...");
+
+            brain.Learn(input, output);
+
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
             transform.position = startPoint;
             transform.rotation = startRotation;
 
-            ready = true;
+            ncc.enabled = true;
+            Debug.Log("Thanks for wait...");
 
         }
     }

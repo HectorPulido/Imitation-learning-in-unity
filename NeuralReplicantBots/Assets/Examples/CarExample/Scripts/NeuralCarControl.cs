@@ -15,41 +15,36 @@ namespace NeuralReplicantBot.Examples.CarExample
         Ray r;
         RaycastHit rh;
 
-        CarController controller;
-        Brain brain;
-        CarMedition med;
+        Rigidbody rb;
+        CarController cc;
+        Brain b;
 
         private void Awake()
         {
-            controller = GetComponent<CarController>();
-            med = GetComponent<CarMedition>();
-            brain = GetComponent<Brain>();
+            rb = GetComponent<Rigidbody>();
+            cc = GetComponent<CarController>();
+            b = GetComponent<Brain>();
 
-            d = new float[rayCount];
+            d = new float[rayCount + 3];
         }
 
         private void Update()
         {
-            if (!med.ready)
-                return;
-
-            LinearAlgebra.Matrix input = new double[1, rayCount];
-
             var m = GetSensors();
+
+            LinearAlgebra.Matrix input = new double[1, m.Length];
 
             for (int i = 0; i < m.Length; i++)
             {
                 input[0, i] = m[i];
             }
 
+            double[,] outputs = b.GetOutput(input);
 
-            double[,] outputs = brain.GetOutput(input);
-
-
-            controller.Move((float)outputs[0, 1],
-                            (float)outputs[0, 0],
-                           0,//(float)outputs[2] * 2f - 1,//(float)outputs[2] * 2f - 1,
-                           0);//(float)outputs[3] * 2f - 1);
+            cc.Move((float)outputs[0, 1],
+                    (float)outputs[0, 0],
+                    (float)outputs[0, 0], 
+                    0);
 
         }
 
@@ -77,6 +72,9 @@ namespace NeuralReplicantBot.Examples.CarExample
                 Debug.DrawRay(r.origin, r.direction * d[i] * maxDistance, Color.green);
             }
 
+            d[rayCount + 0] = cc.CurrentSpeed / cc.MaxSpeed;
+            d[rayCount + 1] = cc.CurrentSteerAngle;
+            d[rayCount + 2] = rb.angularVelocity.magnitude / rb.maxAngularVelocity;
             return d;
         }
     }
