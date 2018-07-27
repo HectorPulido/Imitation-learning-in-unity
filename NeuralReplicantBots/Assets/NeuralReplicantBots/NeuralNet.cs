@@ -118,7 +118,7 @@ namespace NeuralReplicantBot.PerceptronHandler
             delta = new Matrix[LayerCount];
 
             error[LayerCount - 1] = output - OutputValue;
-            delta[LayerCount - 1] = error[LayerCount - 1] * Activation(Zlast, true);
+            delta[LayerCount - 1] = error[LayerCount - 1];// * Activation(Zlast, true);
 
             for (int i = LayerCount - 2; i >= 0; i--)
             {

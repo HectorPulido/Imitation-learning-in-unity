@@ -10,7 +10,6 @@ namespace NeuralReplicantBot.Examples.CarExample
         public int rayCount;
         public int angles;
         public float maxDistance;
-
         float[] d;
         Ray r;
         RaycastHit rh;
@@ -24,7 +23,7 @@ namespace NeuralReplicantBot.Examples.CarExample
             rb = GetComponent<Rigidbody>();
             cc = GetComponent<CarController>();
             b = GetComponent<Brain>();
-            d = new float[rayCount + 3];
+            d = new float[rayCount + 2];
         }
 
         private void Update()
@@ -39,9 +38,9 @@ namespace NeuralReplicantBot.Examples.CarExample
             }
 
             var outputs = b.GetOutput(input); //  { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") }; 
-            
-            var h = (float)outputs[0, 1];
+
             var v = (float)outputs[0, 0];
+            var h = (float)outputs[0, 1];
             cc.Move(h,v,v,0);
 
         }
@@ -69,10 +68,8 @@ namespace NeuralReplicantBot.Examples.CarExample
 
                 Debug.DrawRay(r.origin, r.direction * d[i] * maxDistance, Color.green);
             }
-
             d[rayCount + 0] = cc.CurrentSpeed / cc.MaxSpeed;
-            d[rayCount + 1] = cc.CurrentSteerAngle;
-            d[rayCount + 2] = rb.angularVelocity.magnitude / rb.maxAngularVelocity;
+            d[rayCount + 1] = rb.angularVelocity.magnitude / rb.maxAngularVelocity;
             return d;
         }
     }

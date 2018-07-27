@@ -29,18 +29,16 @@ namespace NeuralReplicantBot.Examples.CarExample
 
         protected override void Medition(ref Medition m)
         {
-            m.inputs.AddRange(ncc.GetSensors());
-
             float[] o = new float[] { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };            
             m.outputs.AddRange(o);
+            var i = ncc.GetSensors();
+            m.inputs.AddRange(i);
         }
 
         protected override void MeditionEnd(Medition m)
         {
             var medcount = m.outputs.Count / 2;
-
-
-            LinearAlgebra.Matrix input = new double[medcount, ncc.rayCount + 3];
+            LinearAlgebra.Matrix input = new double[medcount, ncc.rayCount + 2];
             LinearAlgebra.Matrix output = new double[medcount, 2];
 
             var k = 0;
@@ -63,6 +61,9 @@ namespace NeuralReplicantBot.Examples.CarExample
                 }
             }
 
+            print(input);
+            print(output);
+
             cuc.enabled = false;
 
             Debug.Log("Please wait, training...");
@@ -76,7 +77,6 @@ namespace NeuralReplicantBot.Examples.CarExample
 
             ncc.enabled = true;
             Debug.Log("Thanks for wait...");
-
         }
     }
 }
