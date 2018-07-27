@@ -9,7 +9,6 @@ Artificial neural networks are a group of algorithm that can imitate almost any 
 With the human monitor script the keys that human presses and the sensors of the bot are keeped to be used as a dataset for the Neural net script and it's signals are interpreted by the brain to make a human - like behaviour 
 
 ## TO DO
-- Make it works
 - More examples
 
 ## WHY (MOTIVATION)
