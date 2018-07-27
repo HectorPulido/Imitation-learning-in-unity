@@ -1,7 +1,6 @@
 # IMITATION LEARNING IN UNITY
 <b>This is a implementation of [Vectorized neural network](https://github.com/HectorPulido/Vectorized-multilayer-neural-network) </b>in unity, an open source project that uses neural networks and backpropagation in C#, and train it via stochastic gradient descend  <br/>
 ### This project is still under development and is highly experimental
-I'm having problems with the training, the neural network trains until the loss is <0.02 but the car example does not work ok 
 
 ## HOW IT WORKS
 [![Banner](http://img.youtube.com/vi/HRYYxJd9qiA/0.jpg)](https://www.youtube.com/watch?v=HRYYxJd9qiA) <br/>
