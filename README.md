@@ -1,17 +1,20 @@
 # IMITATION LEARNING IN UNITY
-<b>This is a implementation of [Vectorized neural network](https://github.com/HectorPulido/Vectorized-multilayer-neural-network) </b>in unity, an open source project that uses neural networks and backpropagation in C#, and train it via stochastic gradient descend  <br/>
+<b>This is a implementation of [Vectorized neural network](https://github.com/HectorPulido/Vectorized-multilayer-neural-network) </b>in unity, an open source project that uses neural networks and backpropagation in C#, and train it via stochastic gradient descend using as examples a human meditions  <br/>
+
 ### This project is still under development and is highly experimental
 
 ## HOW IT WORKS
-[![Banner](http://img.youtube.com/vi/HRYYxJd9qiA/0.jpg)](https://www.youtube.com/watch?v=HRYYxJd9qiA) <br/>
-Artificial neural networks are a group of algorithm that can imitate almost any existing function, just like a universal stimator, it's a hierarchical matrix multiplication function that can imitate even a human behaviour.
+[![Banner](http://img.youtube.com/vi/nwqnGh2FiUo/0.jpg)](https://www.youtube.com/watch?v=nwqnGh2FiUo) <br/>
 
-With the human monitor script the keys that human presses and the sensors of the bot are keeped to be used as a dataset for the Neural net script and it's signals are interpreted by the brain to make a human - like behaviour 
+Artificial neural networks are a group of algorithm that can imitate almost any existing function, just like an universal stimator, it's a hierarchical matrix multiplication function that can imitate even the human behaviour.
+
+With the human monitor script, the keys that human presses and the sensors of the bot are keeped to be used as a dataset for the Neural net script and it's signals are interpreted by the brain to make a human - like behaviour 
 
 ## TO DO
 - More examples
 
 ## WHY (MOTIVATION)
+[![Banner](http://img.youtube.com/vi/HRYYxJd9qiA/0.jpg)](https://www.youtube.com/watch?v=HRYYxJd9qiA) <br/>
 This tutorial was made for <b>Hector Pulido</b> for his youtube channel <br/>
 https://www.youtube.com/c/HectorAndresPulidoPalmar <br/>
 And his Twitch Channel<br/>
@@ -20,7 +23,10 @@ https://www.twitch.tv/hector_pulido_<br/>
 ## HOW TO USE
 Open it on unity 2018 or greater (sorry about that >-< ), and play around with the project.
 
-## Neural network
+### How make it works
+The asset contais 2 important part, the first one is the neural network part, this piece is inside the brain component, that component manage the training process and the prediction process, the other important part is the human monitor, this script must be inherited to save the correct meditions, both brain and human monitor contains tools to save and deploy the data.
+
+### Neural network
 The neural network is the base of this project, it's imposible to the bot to learn without this, the brain contais the neural network and the hyperparameters
 ```csharp
 using NeuralReplicantBot.PerceptronHandler;
@@ -32,47 +38,52 @@ public class NeuralNetworkTest : MendelMachine
 
 	//Init all variables
 	protected override void Start()
-  {
-      brain = GetComponent<Brain>(); //You need to get the brain component from the gameobject
-      
-      //TRAIN
-      brain.Learn(input, output); //To train the model, you need 2 matrix (the shape depends of the brain)
-      
-      //Forward propagation
-      var outputs = brain.GetOutput(input); //To get info from the neural network you need to set input
-  }	
+	{
+		brain = GetComponent<Brain>(); //You need to get the brain component from the gameobject
+
+		//TRAIN
+		brain.Learn(input, output); //To train the model, you need 2 matrix (the shape depends of the brain)
+
+		//Forward propagation
+		var outputs = brain.GetOutput(input); //To get info from the neural network you need to set input
+	}	
 }
 ```
-## Meditions 
+### Meditions 
 The bot is imitating the human, for this is important to register all important actions from the player before the training the class that do that is the HumanMonitor.
 ```csharp
 using NeuralReplicantBot.PerceptronHandler;
 
-public class ExampleMonitor : HumanMonitor
+public class ExampleMonitor : HumanMonitor //<- its super important to inherit from HumanMonitor
 {
-  protected override void Medition(ref Medition m)
-  {          
-      //It's important to add information to the medition object m
-      m.outputs.AddRange(y); // Adding y array to the output count
-      m.inputs.AddRange(x); // Adding x array to the output count
-  }
+	protected override void Medition(ref Medition m)
+	{          
+		//It's important to add information to the medition object m
+		//This part of the code is runned many times 
+		m.outputs.AddRange(y); // Adding y array to the output count
+		m.inputs.AddRange(x); // Adding x array to the output count
+	}
 
-  protected override void MeditionEnd(Medition m)
-  {
-      // here the medition is over, so is important to decide what to do with the information eg. train the neural network
-      Debug.Log("Please wait, training...");
-      brain.Learn(input, output);            
-      //AMAZINGDOSTUFF
-      Debug.Log("Thanks for wait...");
-  }
+	protected override void MeditionEnd(Medition m)
+	{
+		// here the medition is over, so is important to decide what to do with the information eg. train the neural network
+		//This part of the code is runned once, when the medition count is over
+		Debug.Log("Please wait, training...");
+		brain.Learn(input, output);      //<- this is a good place to train the brain      
+		//AMAZINGSTUFF
+		Debug.Log("Thanks for wait...");
+	}
 }
 ```
 
 ## EXAMPLES
 
+### LOGIC DOOR 
+This is a super simple script to understand how the brain works, the neural network learns how to make some logic doors, this example does not contains a human monitor
+
 ### SELF DRIVING CAR
 ![Example](/Images/ExampleImage.gif) <br/>
-At this moment there is only one example in the project, a self driving car with a lot of raycast as inputs and Horizontal and Vertical axis as output
+At this moment there is only one complex example in the project, a self driving car with a lot of raycast as inputs and Horizontal and Vertical axis as output
 
 ## OTHER WORKS 
 ### Evolutionary Neural Networks on Unity For bots
