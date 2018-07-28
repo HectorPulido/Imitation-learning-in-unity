@@ -368,7 +368,6 @@ GameObject:
   - component: {fileID: 114622753118324774}
   - component: {fileID: 114416985020466300}
   - component: {fileID: 114605543070524546}
-  - component: {fileID: 114879034952401150}
   - component: {fileID: 11400022}
   - component: {fileID: 11400002}
   m_Layer: 0
@@ -6974,11 +6973,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 100042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e61e4ccb909f90b48af7d2d849727307, type: 3}
+  m_Script: {fileID: 11500000, guid: 115a9b876b3f1f44d8332b9fdc99320f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isTraining: 0
   eyes: {fileID: 4375827317410258}
-  rayCount: 9
+  rayCount: 6
   angles: 180
   maxDistance: 200
 --- !u!114 &114605543070524546
@@ -6993,13 +6993,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   epoch: 2000
-  topology: 0b0000001e000000140000000f0000000f00000002000000
+  topology: 080000001e00000014000000140000000f00000002000000
   lossShowRate: 333
   batchSize: 50
   activationFunction: 0
   learningRate: 0.00001
   useRelativeDataPath: 1
-  dataPath: Car.nn
+  dataPath: /data/Car.nn
   save: 1
   load: 0
 --- !u!114 &114622753118324774
@@ -7019,18 +7019,6 @@ MonoBehaviour:
   loadData: 1
   useRelativeDataPath: 1
   dataPath: /data/car.med
---- !u!114 &114879034952401150
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948ddce44e33c8e45add60f31a55fdcd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  training: 0
 --- !u!124 &124963520522749734
 Behaviour:
   m_ObjectHideFlags: 1

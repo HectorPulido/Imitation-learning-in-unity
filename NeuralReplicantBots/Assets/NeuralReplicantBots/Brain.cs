@@ -22,7 +22,7 @@ namespace NeuralReplicantBot.PerceptronHandler
         public bool load = false;
         NeuralNetwork nn;
 
-        private void Awake()
+        private void Start()
         {
             if (dataPath == "" || dataPath == null)
                 dataPath = useRelativeDataPath ? Application.dataPath + "/Data/data.nn" : "c://data.nn";

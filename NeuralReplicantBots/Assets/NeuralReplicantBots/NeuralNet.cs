@@ -27,7 +27,6 @@ namespace NeuralReplicantBot.PerceptronHandler
                 W[i] = Matrix.Random(NeuronCount[i] + 1, NeuronCount[i + 1], r) * 2 - 1;
             }
         }
-
         public NeuralNetwork(Matrix[] W, Random r, ActivationFunction a)
         {
             this.W = W;
@@ -43,8 +42,6 @@ namespace NeuralReplicantBot.PerceptronHandler
                 NeuronCount[i] = W[i].Y;
             }
         }
-
-
         public void Learn(Matrix InputValue, Matrix OutputValue, 
             double LearningRate, int epoch, 
             Action<string> LossAction, int s = 10, int batchsize = 50)
@@ -83,7 +80,7 @@ namespace NeuralReplicantBot.PerceptronHandler
                     GradientDescend(A, delta, LearningRate);
 
                     if(i == 0 && e % s == 0)
-                        LossAction("Loss: " + LastError.Pow(2).Avg);
+                        LossAction(String.Format("Epoch {0}, Loss {1}", e, LastError.Pow(2).Avg));
                 }                
             }
         }

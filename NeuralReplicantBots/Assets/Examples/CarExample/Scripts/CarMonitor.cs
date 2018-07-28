@@ -4,16 +4,14 @@ namespace NeuralReplicantBot.Examples.CarExample
 {
     using NeuralReplicantBot.PerceptronHandler;
     using UnityStandardAssets.Vehicles.Car;
+    using LinearAlgebra;
 
-    public class CarMedition : HumanMonitor
+    public class CarMonitor : HumanMonitor
     {
         Brain brain;
         CarUserControl cuc;
         NeuralCarControl ncc;
         Rigidbody rb;
-
-        Vector3 startPoint;
-        Quaternion startRotation;
 
         private void Awake()
         {
@@ -24,24 +22,27 @@ namespace NeuralReplicantBot.Examples.CarExample
 
             startPoint = transform.position;
             startRotation = transform.rotation;
-
         }
 
         protected override void Medition(ref Medition m)
         {
-            float[] o = new float[] { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };            
+            float[] o = { Input.GetAxis("Vertical"), Input.GetAxis("Horizontal") };            
+            float[] i = ncc.GetSensors();
+
             m.outputs.AddRange(o);
-            var i = ncc.GetSensors();
             m.inputs.AddRange(i);
         }
-
+        
+        Vector3 startPoint;
+        Quaternion startRotation;
         protected override void MeditionEnd(Medition m)
         {
-            var medcount = m.outputs.Count / 2;
-            LinearAlgebra.Matrix input = new double[medcount, ncc.rayCount + 2];
-            LinearAlgebra.Matrix output = new double[medcount, 2];
+            int medcount  = m.outputs.Count / 2;
 
-            var k = 0;
+            Matrix input  = new Matrix(medcount, ncc.rayCount + 2);
+            Matrix output = new Matrix(medcount, 2);
+
+            int k = 0;
             for (int i = 0; i < input.X; i++)
             {
                 for (int j = 0; j < input.Y; j++)
@@ -64,18 +65,18 @@ namespace NeuralReplicantBot.Examples.CarExample
             print(input);
             print(output);
 
-            cuc.enabled = false;
-
             Debug.Log("Please wait, training...");
 
-            brain.Learn(input, output);
+            cuc.enabled = false; // No more human control
+            ncc.isTraining = false; // Bot control
 
+            //Reset everything
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             transform.position = startPoint;
             transform.rotation = startRotation;
 
-            ncc.enabled = true;
+            brain.Learn(input, output);
             Debug.Log("Thanks for wait...");
         }
     }
