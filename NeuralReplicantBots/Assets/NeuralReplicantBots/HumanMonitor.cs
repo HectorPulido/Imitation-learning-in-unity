@@ -26,7 +26,6 @@ namespace NeuralReplicantBot.PerceptronHandler
         public float meditionCount = 30;
         public bool saveData;
         public bool loadData;
-        public bool useRelativeDataPath;
         public string dataPath = "";
 
         float t;
@@ -34,9 +33,7 @@ namespace NeuralReplicantBot.PerceptronHandler
         {
             yield return null;
             if (dataPath == "" || dataPath == null)
-                dataPath = useRelativeDataPath ? Application.dataPath + "/Data/data.nn" : "c://data.nn";
-            else
-                dataPath = useRelativeDataPath ? Application.dataPath + dataPath : dataPath;
+                dataPath =  "c://data.med";
 
             var medition = new Medition();
 

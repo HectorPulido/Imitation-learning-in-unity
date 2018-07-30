@@ -206,17 +206,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 964706248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e755a6fca50dc24ab15de659dbc48f2, type: 3}
+  m_Script: {fileID: 11500000, guid: 9747f1003b46ced46b125652ac7484c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  epoch: 3001
+  epoch: 100001
   topology: 020000000500000004000000
-  lossShowRate: 10
+  lossShowRate: 5000
   batchSize: 0
-  activationFunction: 1
-  learningRate: 0.1
-  useRelativeDataPath: 1
-  dataPath: /Data/LogicDoor.nn
+  activationFunction: 0
+  learningRate: 0.0001
+  dataPath: Assets/Data/LogicDoor.nn
   save: 1
   load: 0
 --- !u!114 &964706250
@@ -227,7 +226,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 964706248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb6f4f33119a3164091606bfb04d6ff7, type: 3}
+  m_Script: {fileID: 11500000, guid: 342ef02d38545164c91a8a676b029452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isTraining: 1

@@ -14,20 +14,18 @@ namespace NeuralReplicantBot.PerceptronHandler
         public int batchSize;
         public ActivationFunction activationFunction;
         public float learningRate = 0.8f;
-        public bool useRelativeDataPath = true;
         public string dataPath;
         public bool save;
-
-        [HideInInspector]
         public bool load = false;
         NeuralNetwork nn;
 
-        private void Start()
+        public void Begin()
         {
+            if(nn != null)
+                return;
+
             if (dataPath == "" || dataPath == null)
-                dataPath = useRelativeDataPath ? Application.dataPath + "/Data/data.nn" : "c://data.nn";
-            else
-                dataPath = useRelativeDataPath ? Application.dataPath + dataPath : dataPath;
+                dataPath =  "c://data.nn";
 
             if (load)
             {
@@ -41,7 +39,6 @@ namespace NeuralReplicantBot.PerceptronHandler
                 catch (SerializationException e)
                 {
                     Debug.LogError(e.Message);
-                    nn = new NeuralNetwork(topology, new System.Random(1), activationFunction);
                 }
             }
             else

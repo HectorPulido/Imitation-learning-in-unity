@@ -9,13 +9,13 @@ namespace NeuralReplicantBot.Examples.LogicDoors
 		void Start()
 		{
 			Matrix x = new double[,]{{0,0}, 
-									{0,1}, 
-									{1,0}, 
-									{1,1} };
+									 {0,1}, 
+									 {1,0}, 
+									 {1,1} };
 			Matrix y = new double[,]{{0,0,0,1}, 
-									{1,0,1,0}, 
-									{1,0,1,0}, 
-									{1,1,0,1} };
+									 {1,0,1,0}, 
+									 {1,0,1,0}, 
+									 {1,1,0,1} };
 
 			if(isTraining)
 			{

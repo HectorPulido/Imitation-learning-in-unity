@@ -15,6 +15,7 @@ namespace NeuralReplicantBot.PerceptronHandler
 			brain = GetComponent<Brain>();
 
 			brain.load = !isTraining;
+			brain.Begin();
 		}
 
 	}
