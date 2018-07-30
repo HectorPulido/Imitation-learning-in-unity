@@ -27,6 +27,7 @@ namespace NeuralReplicantBot.PerceptronHandler.Editor
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("meditionPeriod"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("meditionCount"));
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("loadData"));
+
 			if(h.loadData)
 			{
 				EditorGUILayout.HelpBox("If you load the data, a dataset will be load and you will not play", MessageType.Warning);
