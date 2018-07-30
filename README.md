@@ -85,6 +85,10 @@ public class ExampleMonitor : HumanMonitor //<- its super important to inherit f
 }
 ```
 
+### When you finish to train...
+![Load and save](/Images/Load%20and%20save.JPG) <br/>
+Now you can load a neural network whenever you want via drag and drop a .nn file, that file is also compatible with Evolutionary Neural Networks on Unity For bots, the same feature is available for the HumanMonitor (and it's childs) as an .med file, to save a .nn or .med, just press the button create, that will generate a EMPTY file, that file can ve overwritten after the training
+
 ## EXAMPLES
 
 ### LOGIC DOOR 
